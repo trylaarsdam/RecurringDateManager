@@ -7,11 +7,11 @@
 
 import Foundation
 
-public enum EventInterval {
-    case second
-    case minute
-    case hour
-    case day
-    case week
-    case month
+public enum EventInterval: String {
+    case second = "second"
+    case minute = "minute"
+    case hour = "hour"
+    case day = "day"
+    case week = "week"
+    case month = "month"
 }
