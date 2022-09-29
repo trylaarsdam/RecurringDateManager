@@ -15,6 +15,27 @@ public struct RecurringDateManager {
         event.enabledIntervals.forEach { interval in
             //calculate dates for next 5 years
             var queuedDates = [Date]()
+            
+            kConfiguredIntervals[interval.rawValue]?.forEach { value in
+                var timeUnitFactor = 0
+                switch (interval) {
+                case .minute:
+                    timeUnitFactor = kMinuteToSecond
+                case .hour:
+                    timeUnitFactor = kHourToSecond
+                case .day:
+                    timeUnitFactor = kDayToSecond
+                case .week:
+                    timeUnitFactor = kWeekToSecond
+                case .month:
+                    timeUnitFactor = kMonthToSecond
+                default:
+                    timeUnitFactor = 0
+                }
+                
+                queuedDates.append(event.date.addingTimeInterval(Double(value * timeUnitFactor)))
+            }
+            
             switch (interval) {
             case .second:
                 queuedDates.append(event.date.addingTimeInterval(10000))
