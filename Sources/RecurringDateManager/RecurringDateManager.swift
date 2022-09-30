@@ -7,53 +7,46 @@ public struct RecurringDateManager {
         self.recurringEvents = getRecurringEvents()
     }
     
-    func createRecurringEvent(name: String, date: Date, enabledIntervals: [EventInterval]) -> RecurringEvent {
+    public func createRecurringEvent(name: String, date: Date, enabledIntervals: [EventInterval]) -> RecurringEvent {
         let event = RecurringEvent(name: name,
                                    date: date,
                                    enabledIntervals: enabledIntervals)
         
+        print("Getting times for event \(date.ISO8601Format())")
+        
         event.enabledIntervals.forEach { interval in
             //calculate dates for next 5 years
-            var queuedDates = [Date]()
+            print("Dates for interval: \(interval.rawValue)")
+            let queuedDates = calculateIntervals(interval: interval, date: event.date)
             
-            kConfiguredIntervals[interval.rawValue]?.forEach { value in
-                var timeUnitFactor = 0
-                switch (interval) {
-                case .minute:
-                    timeUnitFactor = kMinuteToSecond
-                case .hour:
-                    timeUnitFactor = kHourToSecond
-                case .day:
-                    timeUnitFactor = kDayToSecond
-                case .week:
-                    timeUnitFactor = kWeekToSecond
-                case .month:
-                    timeUnitFactor = kMonthToSecond
-                default:
-                    timeUnitFactor = 0
-                }
-                
-                queuedDates.append(event.date.addingTimeInterval(Double(value * timeUnitFactor)))
-            }
-            
-            switch (interval) {
-            case .second:
-                queuedDates.append(event.date.addingTimeInterval(10000))
-                queuedDates.append(event.date.addingTimeInterval(20000))
-                queuedDates.append(event.date.addingTimeInterval(30000))
-                queuedDates.append(event.date.addingTimeInterval(40000))
-                queuedDates.append(event.date.addingTimeInterval(50000))
-                queuedDates.append(event.date.addingTimeInterval(60000))
-                queuedDates.append(event.date.addingTimeInterval(70000))
-                queuedDates.append(event.date.addingTimeInterval(80000))
-                queuedDates.append(event.date.addingTimeInterval(90000))
-                queuedDates.append(event.date.addingTimeInterval(100000))
-            default:
-                print("not implemented interval \(interval)")
-            }
+            // TODO schedule event
         }
-        // TODO schedule event
-        
         return event
+    }
+    
+    public func calculateIntervals(interval: EventInterval, date: Date) -> [Date] {
+        var queuedDates = [Date]()
+        kConfiguredIntervals[interval.rawValue]?.forEach { value in
+            var timeUnitFactor = 0
+            switch (interval) {
+            case .minute:
+                timeUnitFactor = kMinuteToSecond
+            case .hour:
+                timeUnitFactor = kHourToSecond
+            case .day:
+                timeUnitFactor = kDayToSecond
+            case .week:
+                timeUnitFactor = kWeekToSecond
+            case .month:
+                timeUnitFactor = kMonthToSecond
+            default:
+                timeUnitFactor = 0
+            }
+            
+            queuedDates.append(date.addingTimeInterval(Double(value * timeUnitFactor)))
+            print(queuedDates.last!.ISO8601Format())
+        }
+        
+        return queuedDates
     }
 }
