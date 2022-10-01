@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct RecurringEvent: Identifiable {
+public struct RecurringEvent: Identifiable, Codable {
     public var id: String = UUID().uuidString
     public var name: String
     public var date: Date

@@ -7,10 +7,16 @@ public struct RecurringDateManager {
         self.recurringEvents = getRecurringEvents()
     }
     
+    public func getEvents() -> [RecurringEvent] {
+        return getRecurringEvents()
+    }
+    
     public func createRecurringEvent(name: String, date: Date, enabledIntervals: [EventInterval]) -> RecurringEvent {
         let event = RecurringEvent(name: name,
                                    date: date,
                                    enabledIntervals: enabledIntervals)
+        
+        storeEvent(event: event)
         
         print("Getting times for event \(date.ISO8601Format())")
         

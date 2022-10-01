@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum EventInterval: String, CaseIterable {
+public enum EventInterval: String, CaseIterable, Codable {
     case second = "second"
     case minute = "minute"
     case hour = "hour"
