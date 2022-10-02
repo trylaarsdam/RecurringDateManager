@@ -22,7 +22,7 @@ public struct RecurringDateManager {
             }
         }
         
-        return eventNotifications
+        return eventNotifications.sorted(by: { $0.date.compare($1.date) == .orderedAscending })
     }
     
     public func deleteEvent(id: String) {
@@ -61,14 +61,14 @@ public struct RecurringDateManager {
             let queuedDates = calculateIntervals(interval: interval, date: event.date)
             
             queuedDates.forEach { date in
-                scheduledNotificationIDs.append(self.scheduleNotification(id: UUID().uuidString, event: event, notificationDate: date.0, title: "\(name) milestone hit!", message: "You've just passed \(date.1) \(interval.rawValue)s since \(date.0.ISO8601Format())"))
+                scheduledNotificationIDs.append(self.scheduleNotification(id: UUID().uuidString, event: event, notificationDate: date.0, title: "\(name) milestone hit!", message: "You've just passed \(date.1) \(interval.rawValue)s since \(date.0.ISO8601Format())", interval: interval))
             }
             // TODO schedule event
         }
         return event
     }
     
-    public func scheduleNotification(id: String, event: RecurringEvent, notificationDate: Date, title: String, message: String) -> String {
+    public func scheduleNotification(id: String, event: RecurringEvent, notificationDate: Date, title: String, message: String, interval: EventInterval) -> String {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
             if success {
 //                print("Notification permission verified")
@@ -88,7 +88,7 @@ public struct RecurringDateManager {
                 // add our notification request
                 UNUserNotificationCenter.current().add(request)
                 
-                storeNotification(notification: QueuedNotification(id: notificationID, eventID: event.id, date: notificationDate))
+                storeNotification(notification: QueuedNotification(id: notificationID, eventID: event.id, date: notificationDate, interval: interval))
 
             } else if let error = error {
                 print(error.localizedDescription)

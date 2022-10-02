@@ -52,7 +52,7 @@ func storeNotification(notification: QueuedNotification) {
     }
 }
 
-func getQueuedNotifications() -> [QueuedNotification] {
+public func getQueuedNotifications() -> [QueuedNotification] {
     let jsonDecoder = JSONDecoder()
     do {
         return try jsonDecoder.decode([QueuedNotification].self, from: (defaults.object(forKey: kStorageQueuedNotificationsKey) as? Data ?? "[]".data(using: .utf8))!)

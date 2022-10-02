@@ -11,7 +11,7 @@ public let kStorageRecurringEventsKey = "recurringEvents"
 public let kStorageQueuedNotificationsKey = "queuedNotifications"
 
 public let kConfiguredIntervals = [
-    EventInterval.second.rawValue: [1000000,5000000,10000000,15000000,20000000,25000000,30000000],
+    EventInterval.second.rawValue: [15,1000000,5000000,10000000,15000000,20000000,25000000,30000000],
     EventInterval.minute.rawValue: [100000, 200000,300000,400000,500000,600000,700000,800000,900000,1000000],
     EventInterval.hour.rawValue: [100000, 200000,300000,400000,500000,600000,700000,800000,900000,1000000],
     EventInterval.day.rawValue: [500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000],
