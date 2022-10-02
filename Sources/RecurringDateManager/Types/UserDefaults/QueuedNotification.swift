@@ -11,4 +11,5 @@ public struct QueuedNotification: Identifiable, Codable {
     public var id: String
     public var eventID: String
     public var date: Date
+    public var interval: EventInterval
 }

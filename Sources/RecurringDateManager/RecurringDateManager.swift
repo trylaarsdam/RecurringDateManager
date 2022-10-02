@@ -13,7 +13,16 @@ public struct RecurringDateManager {
     }
     
     public func getNotificationsOfEvent(id: String) -> [QueuedNotification] {
-        return getQueuedNotifications()
+        let notifications = getQueuedNotifications()
+        var eventNotifications = [QueuedNotification]()
+        
+        notifications.forEach { item in
+            if item.eventID == id {
+                eventNotifications.append(item)
+            }
+        }
+        
+        return eventNotifications
     }
     
     public func deleteEvent(id: String) {
@@ -48,23 +57,21 @@ public struct RecurringDateManager {
         print("Getting times for event \(date.ISO8601Format())")
         
         event.enabledIntervals.forEach { interval in
-            //calculate dates for next 5 years
             print("Dates for interval: \(interval.rawValue)")
             let queuedDates = calculateIntervals(interval: interval, date: event.date)
             
             queuedDates.forEach { date in
-                scheduledNotificationIDs.append(self.scheduleNotification(event: event, notificationDate: date.0, title: "\(name) milestone hit!", message: "You've just passed \(date.1) \(interval.rawValue)s since \(date.0.ISO8601Format())"))
+                scheduledNotificationIDs.append(self.scheduleNotification(id: UUID().uuidString, event: event, notificationDate: date.0, title: "\(name) milestone hit!", message: "You've just passed \(date.1) \(interval.rawValue)s since \(date.0.ISO8601Format())"))
             }
             // TODO schedule event
         }
         return event
     }
     
-    public func scheduleNotification(event: RecurringEvent, notificationDate: Date, title: String, message: String) -> String {
-        var id = ""
+    public func scheduleNotification(id: String, event: RecurringEvent, notificationDate: Date, title: String, message: String) -> String {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
             if success {
-                print("Notification permission verified")
+//                print("Notification permission verified")
                 
                 let content = UNMutableNotificationContent()
                 
@@ -74,19 +81,20 @@ public struct RecurringDateManager {
 
                 // show this notification five seconds from now
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: notificationDate.timeIntervalSinceNow, repeats: false)
-                let notificationID = UUID().uuidString
+                let notificationID = id
                 // choose a random identifier
                 let request = UNNotificationRequest(identifier: notificationID, content: content, trigger: trigger)
                 
                 // add our notification request
                 UNUserNotificationCenter.current().add(request)
-                id = notificationID
+                
+                storeNotification(notification: QueuedNotification(id: notificationID, eventID: event.id, date: notificationDate))
+
             } else if let error = error {
                 print(error.localizedDescription)
             }
         }
         
-        storeNotification(notification: QueuedNotification(id: id, eventID: event.id, date: notificationDate))
         
         return id
     }
