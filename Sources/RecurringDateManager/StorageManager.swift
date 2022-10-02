@@ -28,6 +28,40 @@ func storeEvent(event: RecurringEvent) {
     }
 }
 
+func updateEvents(events: [RecurringEvent]) {
+    let jsonEncoder = JSONEncoder()
+    do {
+        defaults.set(try jsonEncoder.encode(events), forKey: kStorageRecurringEventsKey)
+    } catch {
+        print("Error updating events")
+    }
+}
+
+func storeNotification(notification: QueuedNotification) {
+    let jsonEncoder = JSONEncoder()
+    var currentList = getQueuedNotifications()
+    
+    print("Current List:")
+    print(currentList)
+    
+    currentList.append(notification)
+    do {
+        defaults.set(try jsonEncoder.encode(currentList), forKey: kStorageQueuedNotificationsKey)
+    } catch {
+        print("Error saving notification")
+    }
+}
+
+func getQueuedNotifications() -> [QueuedNotification] {
+    let jsonDecoder = JSONDecoder()
+    do {
+        return try jsonDecoder.decode([QueuedNotification].self, from: (defaults.object(forKey: kStorageQueuedNotificationsKey) as? Data ?? "[]".data(using: .utf8))!)
+    } catch {
+        print("Error decoding userdefaults json")
+        return [QueuedNotification]()
+    }
+}
+
 func getRecurringEvents() -> [RecurringEvent] {
     let jsonDecoder = JSONDecoder()
     do {

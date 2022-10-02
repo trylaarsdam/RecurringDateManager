@@ -8,6 +8,7 @@
 import Foundation
 
 public let kStorageRecurringEventsKey = "recurringEvents"
+public let kStorageQueuedNotificationsKey = "queuedNotifications"
 
 public let kConfiguredIntervals = [
     EventInterval.second.rawValue: [1000000,5000000,10000000,15000000,20000000,25000000,30000000],
